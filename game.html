@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Perdagangan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* CSS untuk Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px; /* Tambahkan padding agar tidak terlalu mepet di layar kecil */
+            box-sizing: border-box; /* Pastikan padding tidak menambah lebar total */
+        }
+        .calculator-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+        }
+        h2, h3 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 25px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+        }
+        .input-group input[type="number"] {
+            width: calc(100% - 40px); /* Kurangi lebar ikon */
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box;
+            vertical-align: middle;
+        }
+        .input-group .icon {
+            display: inline-block;
+            width: 30px;
+            text-align: center;
+            font-size: 1.2em;
+            color: #007bff; /* Warna default ikon */
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+        .calculate-button {
+            width: 100%;
+            padding: 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+        .calculate-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Styling untuk Bagian Hasil */
+        #resultSection {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+        }
+        #resultSection h3 {
+            margin-bottom: 15px;
+            color: #28a745; /* Warna untuk judul hasil */
+        }
+        /* Style untuk canvas grafik */
+        .result-graph-container {
+            margin-bottom: 20px;
+            max-width: 400px; /* Sesuaikan dengan lebar canvas */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #totalProfitLoss {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        #profitLossPercentage {
+            font-size: 1.2em;
+            display: block;
+            margin-bottom: 20px;
+        }
+        #profitLossStatus { /* Style untuk keterangan Untung/Rugi */
+            font-weight: bold;
+            font-size: 1.1em;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .summary-details {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .summary-item {
+            text-align: center;
+            padding: 10px 15px;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 120px;
+        }
+        .summary-item .value {
+            font-weight: bold;
+            font-size: 1.1em;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .summary-item small {
+            color: #666;
+        }
+        .summary-item.entry { background-color: #e0f2f7; color: #007bff; }
+        .summary-item.exit { background-color: #e6ffe6; color: #28a745; }
+        .summary-item.lot { background-color: #f8f9fa; color: #333; }
+
+        /* Styling untuk Mata Uang */
+        .currency-selector-group {
+            margin-bottom: 25px;
+            text-align: center;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            background-color: #fbfbfb;
+        }
+        .currency-selector-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: bold;
+        }
+        .currency-selector-group select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            width: 100%;
+            max-width: 250px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <h2>Kalkulator Perdagangan</h2>
+
+        <div class="currency-selector-group">
+            <label for="currencySelect"><i class="fas fa-money-bill-wave icon" style="color: #28a745;"></i> Pilih Mata Uang:</label>
+            <select id="currencySelect">
+                <option value="IDR">IDR - Rupiah Indonesia</option>
+                <option value="USD">USD - Dolar Amerika Serikat</option>
+                <option value="EUR">EUR - Euro</option>
+                <option value="JPY">JPY - Yen Jepang</option>
+                </select>
+        </div>
+
+        <h3>Kalkulator Untung / Rugi</h3>
+
+        <div class="input-group">
+            <label for="entryPriceInput"><i class="fas fa-arrow-alt-circle-down icon" style="color: #28a745;"></i> Harga Masuk</label>
+            <input type="number" id="entryPriceInput" placeholder="Masukkan harga masuk" value="100000">
+        </div>
+
+        <div class="input-group">
+            <label for="exitPriceInput"><i class="fas fa-arrow-alt-circle-up icon" style="color: #dc3545;"></i> Harga Keluar</label>
+            <input type="number" id="exitPriceInput" placeholder="Masukkan harga keluar" value="150000">
+        </div>
+
+        <div class="input-group">
+            <label for="lotSizeInput"><i class="fas fa-box icon" style="color: #555;"></i> Ukuran Lot (dalam unit)</label>
+            <input type="number" id="lotSizeInput" placeholder="Masukkan jumlah unit" value="100">
+        </div>
+
+        <button class="calculate-button">Hitung</button>
+
+        <div id="resultSection" style="display: none;">
+            <h3>Hasil Perdagangan Anda</h3>
+            <div class="result-graph-container">
+                <canvas id="profitLossChart"></canvas>
+            </div>
+            <p>
+                <span id="profitLossStatus"></span> Total Untung/Rugi: <span id="totalProfitLoss"></span>
+            </p>
+            <p>
+                Persentase Untung/Rugi: <span id="profitLossPercentage"></span>
+            </p>
+            <div class="summary-details">
+                <div class="summary-item entry">
+                    <span class="value" id="displayEntryPrice"></span>
+                    <small>Harga Masuk</small>
+                </div>
+                <div class="summary-item exit">
+                    <span class="value" id="displayExitPrice"></span>
+                    <small>Harga Keluar</small>
+                </div>
+                <div class="summary-item lot">
+                    <span class="value" id="displayLotSize"></span>
+                    <small>Ukuran Lot</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            const calculateButton = document.querySelector('.calculate-button');
+            const resultSection = document.getElementById('resultSection');
+            const totalProfitLossSpan = document.getElementById('totalProfitLoss');
+            const profitLossPercentageSpan = document.getElementById('profitLossPercentage');
+            const profitLossStatusSpan = document.getElementById('profitLossStatus'); // Dapatkan elemen status
+            const displayEntryPriceSpan = document.getElementById('displayEntryPrice');
+            const displayExitPriceSpan = document.getElementById('displayExitPrice');
+            const displayLotSizeSpan = document.getElementById('displayLotSize');
+            const currencySelect = document.getElementById('currencySelect');
+
+            // Inisialisasi Chart.js variabel global
+            let myProfitLossChart;
+
+            function calculateAndDisplayResult() {
+                let entryPrice = parseFloat(document.getElementById('entryPriceInput').value);
+                let exitPrice = parseFloat(document.getElementById('exitPriceInput').value);
+                let lotSize = parseFloat(document.getElementById('lotSizeInput').value);
+                let selectedCurrency = currencySelect.value;
+
+                if (isNaN(entryPrice) || isNaN(exitPrice) || isNaN(lotSize) || entryPrice <= 0 || lotSize <= 0) {
+                    alert('Harap masukkan angka yang valid untuk semua bidang (Harga Masuk dan Ukuran Lot harus lebih dari 0).');
+                    resultSection.style.display = 'none';
+                    // Hancurkan chart jika ada agar tidak menampilkan data yang salah
+                    if (myProfitLossChart) {
+                        myProfitLossChart.destroy();
+                    }
+                    return;
+                }
+
+                let totalProfitLoss = (exitPrice - entryPrice) * lotSize;
+                let profitLossPercentage = ((exitPrice - entryPrice) / entryPrice) * 100;
+
+                // Format angka dengan mata uang yang dipilih
+                const formatter = new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: selectedCurrency,
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+
+                // Tentukan status untung atau rugi dan set warna serta teks keterangan
+                let textColor;
+                let statusText;
+                if (totalProfitLoss >= 0) {
+                    textColor = '#28a745'; // Hijau untuk untung
+                    statusText = 'Anda Untung!';
+                } else {
+                    textColor = '#dc3545'; // Merah untuk rugi
+                    statusText = 'Anda Rugi!';
+                }
+
+                // Terapkan warna dan teks keterangan
+                totalProfitLossSpan.style.color = textColor;
+                profitLossPercentageSpan.style.color = textColor;
+                profitLossStatusSpan.textContent = statusText;
+                profitLossStatusSpan.style.color = textColor;
+
+                // Tampilkan hasil yang diformat
+                totalProfitLossSpan.textContent = formatter.format(totalProfitLoss);
+                profitLossPercentageSpan.textContent = profitLossPercentage.toFixed(2) + '%';
+
+                displayEntryPriceSpan.textContent = formatter.format(entryPrice);
+                displayExitPriceSpan.textContent = formatter.format(exitPrice);
+                displayLotSizeSpan.textContent = lotSize.toLocaleString('id-ID'); // Hanya format angka biasa untuk unit
+
+                resultSection.style.display = 'block'; // Tampilkan bagian hasil
+
+                // --- BAGIAN CHART.JS DINAMIS ---
+                const ctx = document.getElementById('profitLossChart').getContext('2d');
+
+                // Hancurkan instance chart yang ada jika ada (untuk update)
+                if (myProfitLossChart) {
+                    myProfitLossChart.destroy();
+                }
+
+                // Buat atau perbarui chart
+                myProfitLossChart = new Chart(ctx, {
+                    type: 'line', // Jenis grafik: garis
+                    data: {
+                        labels: ['Harga Masuk', 'Harga Keluar'], // Label di sumbu X
+                        datasets: [{
+                            label: 'Pergerakan Harga',
+                            data: [entryPrice, exitPrice], // Data harga
+                            borderColor: textColor, // Warna garis berdasarkan untung/rugi
+                            backgroundColor: (ctx) => {
+                                const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, 200);
+                                if (totalProfitLoss >= 0) {
+                                    gradient.addColorStop(0, 'rgba(40, 167, 69, 0.4)'); // Hijau transparan
+                                    gradient.addColorStop(1, 'rgba(40, 167, 69, 0.05)');
+                                } else {
+                                    gradient.addColorStop(0, 'rgba(220, 53, 69, 0.4)'); // Merah transparan
+                                    gradient.addColorStop(1, 'rgba(220, 53, 69, 0.05)');
+                                }
+                                return gradient;
+                            },
+                            fill: true,
+                            tension: 0.4, // Membuat garis sedikit melengkung
+                            pointRadius: 5,
+                            pointBackgroundColor: textColor,
+                            pointBorderColor: '#fff',
+                            pointHoverRadius: 7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false, // Penting untuk kontrol ukuran
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: statusText === 'Anda Untung!' ? 'Grafik Keuntungan' : 'Grafik Kerugian',
+                                font: {
+                                    size: 16
+                                },
+                                color: textColor
+                            },
+                            legend: {
+                                display: false
+                            },
+                            tooltip: { // Kustomisasi tooltip
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            label += formatter.format(context.parsed.y);
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                ticks: {
+                                    callback: function(value) { // Format ticks sumbu Y
+                                        return formatter.format(value);
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Event Listeners
+            calculateButton.addEventListener('click', calculateAndDisplayResult);
+            currencySelect.addEventListener('change', calculateAndDisplayResult);
+
+            // Panggil sekali saat dimuat untuk mengisi nilai default dan menampilkan grafik awal
+            // Namun, karena resultSection tersembunyi, ini akan dieksekusi saat tombol diklik pertama kali.
+            // Jika ingin grafik langsung muncul dengan nilai default, hapus style="display: none;" dari resultSection
+            // atau panggil calculateAndDisplayResult() setelah DOMContentLoaded.
+            // calculateAndDisplayResult(); // Bisa dipanggil di sini jika Anda ingin hasil langsung muncul saat halaman dimuat
+        });
+    </script>
+</body>
+</html>

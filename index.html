@@ -3,20 +3,75 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Trading Calculators</title>
+  <title>Kalkulator Pip XAU/USD</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>Trading Calculator</h1>
-    <select id="calculatorSelector">
-      <option value="pl">Profit / Loss Calculator</option>
-      <option value="position">Position Size Calculator</option>
-      <option value="rrr">Risk / Reward Ratio Calculator</option>
-    </select>
+    <h2>Kalkulator Pip XAU/USD</h2>
+    
+    <div class="main-content">
+      <!-- Form input section -->
+      <div class="form-container">
+        <div class="form-group">
+          <label for="entry">Harga Entry</label>
+          <input type="number" id="entry" step="0.01" placeholder="Contoh: 2300.00"/>
+        </div>
 
-    <div id="calculatorContainer">
-      <!-- Form akan muncul di sini berdasarkan pilihan -->
+        <div class="form-group">
+          <label for="exit">Harga Exit</label>
+          <input type="number" id="exit" step="0.01" placeholder="Contoh: 2301.00"/>
+        </div>
+
+        <div class="form-group">
+          <label for="lot">Ukuran Lot</label>
+          <select id="lot">
+            <option value="0.01">0.01</option>
+            <option value="0.1">0.10</option>
+            <option value="1">1.00</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="sl">Stop Loss (SL)</label>
+          <input type="number" id="sl" step="0.01" placeholder="Contoh: 2305.00"/>
+        </div>
+
+        <div class="form-group">
+          <label for="tp">Take Profit (TP)</label>
+          <input type="number" id="tp" step="0.01" placeholder="Contoh: 2295.00"/>
+        </div>
+
+        <div class="form-group">
+          <label for="balance">Saldo Akun (USD)</label>
+          <input type="number" id="balance" step="0.01" placeholder="Contoh: 1000.00"/>
+        </div>
+
+        <div class="form-group">
+          <label for="risk">Persentase Risiko (%)</label>
+          <input type="number" id="risk" step="0.1" value="2" placeholder="Contoh: 2"/>
+        </div>
+
+        <div class="form-group">
+          <label for="leverage">Leverage</label>
+          <select id="leverage">
+            <option value="1000">1:1000</option>
+            <option value="500">1:500</option>
+            <option value="100">1:100</option>
+            <option value="50">1:50</option>
+          </select>
+        </div>
+
+        <div class="form-buttons">
+          <button onclick="hitungPip()">Hitung Pip</button>
+          <button onclick="saveResult()">Simpan Hasil</button>
+        </div>
+      </div>
+
+      <!-- Output section -->
+      <div class="output-container">
+        <div class="result" id="result"></div>
+      </div>
     </div>
   </div>
 
