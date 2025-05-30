@@ -9,46 +9,65 @@
 <body>
   <div class="container">
     <div class="form-section">
-      <h2>Gold Market Toolkit</h2>
+      <div class="header">
+        <h1 class="title">🥇 Gold Toolkit</h1>
+        <p class="subtitle">Professional Trading Calculator</p>
+      </div>
 
-      <label for="toolSelect">Pilih Kalkulator:</label>
-      <select id="toolSelect">
-        <option value="pip">Kalkulator Pip</option>
-        <option value="risk">Kalkulator Risk</option>
-      </select>
+      <div class="tool-selector">
+        <label for="toolSelect">Pilih Kalkulator:</label>
+        <select id="toolSelect">
+          <option value="pip">📊 Kalkulator Pip</option>
+          <option value="risk">⚖️ Kalkulator Risk</option>
+        </select>
+      </div>
 
       <!-- Pip Calculator -->
       <form id="pipForm" class="tool-form">
-        <label for="entry">Entry Price:</label>
-        <input type="number" id="entry" step="0.01" required />
+        <div class="input-group">
+          <label for="entry">Entry Price (USD):</label>
+          <input type="number" id="entry" placeholder="Masukkan harga entry" required />
+        </div>
 
-        <label for="tp">Take Profit:</label>
-        <input type="number" id="tp" step="0.01" required />
+        <div class="input-group">
+          <label for="tp">Take Profit (USD):</label>
+          <input type="number" id="tp" placeholder="Masukkan target profit" required />
+        </div>
 
-        <label for="sl">Stop Loss:</label>
-        <input type="number" id="sl" step="0.01" required />
+        <div class="input-group">
+          <label for="sl">Stop Loss (USD):</label>
+          <input type="number" id="sl" placeholder="Masukkan stop loss" required />
+        </div>
 
-        <button type="submit">Hitung Pip</button>
+        <button type="submit" class="submit-btn">Hitung Pip</button>
       </form>
 
       <!-- Risk Calculator -->
       <form id="riskForm" class="tool-form hidden">
-        <label for="balance">Modal (USD):</label>
-        <input type="number" id="balance" required />
+        <div class="input-group">
+          <label for="balance">Modal (USD):</label>
+          <input type="number" id="balance" placeholder="Masukkan modal trading" required />
+        </div>
 
-        <label for="riskPercent">Persentase Risiko (%):</label>
-        <input type="number" id="riskPercent" step="0.1" required />
+        <div class="input-group">
+          <label for="riskPercent">Persentase Risiko (%):</label>
+          <input type="number" id="riskPercent" placeholder="Misal: 2" required />
+        </div>
 
-        <label for="slRisk">Stop Loss (dalam pip):</label>
-        <input type="number" id="slRisk" required />
+        <div class="input-group">
+          <label for="slRisk">Stop Loss (dalam pip):</label>
+          <input type="number" id="slRisk" placeholder="Masukkan jarak SL dalam pip" required />
+        </div>
 
-        <button type="submit">Hitung Lot</button>
+        <button type="submit" class="submit-btn">Hitung Lot</button>
       </form>
     </div>
 
     <div class="result-section">
-      <h2>Hasil</h2>
-      <div id="output"></div>
+      <h2>📈 Hasil Perhitungan</h2>
+      <div id="output">
+        <div class="output-empty">Pilih kalkulator dan masukkan data untuk melihat hasil</div>
+      </div>
     </div>
   </div>
 
