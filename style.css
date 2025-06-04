@@ -133,7 +133,6 @@ select option {
   margin: 0;
 }
 
-
 .tool-form input:focus {
   outline: none;
   border-color: #ffd700;
@@ -253,24 +252,98 @@ select option {
   color: #f56565 !important;
 }
 
+/* Styling khusus untuk peringatan lot size */
+.result-item.warning {
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  border-left: 4px solid #ffc107;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 20px;
+}
+
+.result-item.warning .result-label {
+  color: #ffeb3b;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.result-item.warning .result-value {
+  color: #fff3a0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  text-align: left;
+  font-weight: 500;
+  width: 100%;
+}
+
+/* Styling untuk info broker */
+.result-item.broker-info {
+  background: rgba(23, 162, 184, 0.1);
+  border: 1px solid rgba(23, 162, 184, 0.3);
+  border-left: 4px solid #17a2b8;
+}
+
+.result-item.broker-info .result-label {
+  color: #87ceeb;
+  font-weight: 700;
+}
+
+.result-item.broker-info .result-value {
+  color: #b3e5fc;
+}
+
+/* Styling untuk risk aktual */
+.result-item:has(.result-label:contains("Risk Aktual")) {
+  background: rgba(40, 167, 69, 0.1);
+  border-left: 3px solid #28a745;
+}
+
 .hidden {
   display: none;
 }
 
-@media (max-width: 768px) {
-  .container {
-    grid-template-columns: 1fr;
-    padding: 20px;
-    gap: 20px;
-  }
-  
-  .title {
-    font-size: 2rem;
-  }
-  
-  body {
-    padding: 10px;
-  }
+.leverage-section {
+  margin-top: 20px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.leverage-title {
+  color: #ffd700;
+  font-weight: 600;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.leverage-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.leverage-item:last-child {
+  margin-bottom: 0;
+}
+
+.leverage-label {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+}
+
+.leverage-value {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.95rem;
 }
 
 /* Loading animation */
@@ -286,4 +359,32 @@ select option {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr;
+    padding: 20px;
+    gap: 20px;
+  }
+  
+  .title {
+    font-size: 2rem;
+  }
+  
+  body {
+    padding: 10px;
+  }
+  
+  .result-item.warning,
+  .result-item.broker-info {
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  
+  .result-item.warning .result-value,
+  .result-item.broker-info .result-value {
+    font-size: 0.9rem;
+  }
 }
