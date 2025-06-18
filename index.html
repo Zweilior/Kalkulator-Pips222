@@ -8,76 +8,80 @@
 </head>
 <body>
   <div class="container">
-    <div class="form-section">
-      <div class="header">
-        <h1 class="title">🥇 Gold </h1>
-        <p class="subtitle">Trading Calculator</p>
-      </div>
+    <!-- Header utama di tengah atas -->
+    <div class="main-header">
+      <h1 class="title">🥇 Gold</h1>
+      <p class="subtitle">Trading Calculator</p>
+    </div>
 
-      <div class="tool-selector">
-        <label for="toolSelect">Pilih Kalkulator:</label>
-        <select id="toolSelect">
-          <option value="pip">📊 Kalkulator Pip</option>
-          <option value="risk">⚖️ Kalkulator Risk</option>
-        </select>
-      </div>
+    <!-- Grid layout untuk form dan hasil -->
+    <div class="content-grid">
+      <div class="form-section">
+        <div class="tool-selector">
+          <label for="toolSelect">Pilih Kalkulator:</label>
+          <select id="toolSelect">
+            <option value="pip">📊 Kalkulator Pip</option>
+            <option value="risk">⚖️ Kalkulator Risk</option>
+          </select>
+        </div>
 
-      <!-- Pip Calculator -->
-      <form id="pipForm" class="tool-form">
-        <div class="input-group">
+        <!-- Pip Calculator -->
+        <form id="pipForm" class="tool-form">
+          <div class="input-group">
           <label for="entry">Entry Price (USD):</label>
-          <input type="number" id="entry" placeholder="Masukkan harga entry contoh 2320.5" step="0.1" required />
+          <input type="number" id="entry" placeholder="Masukkan harga entry contoh 2320.500" step="0.001" required />
         </div>
 
         <div class="input-group">
           <label for="tp">Take Profit (USD):</label>
-          <input type="number" id="tp" placeholder="Masukkan target profit contoh 2340.8" step="0.1" required />
+          <input type="number" id="tp" placeholder="Masukkan target profit contoh 2340.800" step="0.001" required />
         </div>
 
         <div class="input-group">
           <label for="sl">Stop Loss (USD):</label>
-          <input type="number" id="sl" placeholder="Masukkan stop loss contoh 2310.2" step="0.1" required />
+          <input type="number" id="sl" placeholder="Masukkan stop loss contoh 2310.200" step="0.001" required />
         </div>
 
-        <button type="submit" class="submit-btn">Hitung Pip</button>
-      </form>
+          <button type="submit" class="submit-btn">Hitung Pip</button>
+        </form>
 
-      <!-- Risk Calculator -->
-      <form id="riskForm" class="tool-form hidden">
-        <div class="input-group">
-          <label for="balance">Modal (USD):</label>
-          <input type="number" id="balance" placeholder="Masukkan modal trading contoh 1500.75" step="0.01" required />
+        <!-- Risk Calculator -->
+        <form id="riskForm" class="tool-form hidden">
+          <div class="input-group">
+            <label for="balance">Modal (USD):</label>
+            <input type="number" id="balance" placeholder="Masukkan modal trading contoh 1500.75" step="0.01" required />
+          </div>
+
+          <div class="input-group">
+            <label for="riskPercent">Persentase Risiko (%):</label>
+            <input type="number" id="riskPercent" placeholder="Misal: 1.5" step="0.1" required />
+          </div>
+
+          <div class="input-group">
+            <label for="slRisk">Stop Loss (dalam pip):</label>
+            <input type="number" id="slRisk" placeholder="Masukkan jarak SL dalam pip" step="0.1" required />
+          </div>
+
+          <div class="input-group">
+            <label for="leverage">Leverage:</label>
+            <select id="leverage" required>
+              <option value="50">1:50</option>
+              <option value="100" selected>1:100</option>
+              <option value="200">1:200</option>
+              <option value="500">1:500</option>
+              <option value="1000">1:1000</option>
+            </select>
+          </div>
+
+          <button type="submit" class="submit-btn">Hitung Risk</button>
+        </form>
+      </div>
+
+      <div class="result-section">
+        <h2>📈 Hasil Perhitungan</h2>
+        <div id="output">
+          <div class="output-empty">Pilih kalkulator dan masukkan data untuk melihat hasil</div>
         </div>
-
-        <div class="input-group">
-          <label for="riskPercent">Persentase Risiko (%):</label>
-          <input type="number" id="riskPercent" placeholder="Misal: 1.5" step="0.1" required />
-        </div>
-
-        <div class="input-group">
-          <label for="slRisk">Stop Loss (dalam pip):</label>
-          <input type="number" id="slRisk" placeholder="Masukkan jarak SL dalam pip" step="0.1" required />
-        </div>
-
-        <div class="input-group">
-          <label for="leverage">Leverage:</label>
-          <select id="leverage" required>
-            <option value="50">1:50</option>
-            <option value="100" selected>1:100</option>
-            <option value="200">1:200</option>
-            <option value="500">1:500</option>
-            <option value="1000">1:1000</option>
-          </select>
-        </div>
-
-        <button type="submit" class="submit-btn">Hitung Risk</button>
-      </form>
-    </div>
-
-    <div class="result-section">
-      <h2>📈 Hasil Perhitungan</h2>
-      <div id="output">
-        <div class="output-empty">Pilih kalkulator dan masukkan data untuk melihat hasil</div>
       </div>
     </div>
   </div>

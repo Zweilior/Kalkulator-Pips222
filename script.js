@@ -1,65 +1,87 @@
-const $ = id => document.getElementById(id);
-const output = $("output");
+// Tool selector functionality
+const toolSelect = document.getElementById('toolSelect');
+const pipForm = document.getElementById('pipForm');
+const riskForm = document.getElementById('riskForm');
+const output = document.getElementById('output');
 
-const toolSelect = $("toolSelect");
-const pipForm = $("pipForm");
-const riskForm = $("riskForm");
-
-toolSelect.addEventListener("change", () => {
-  const selected = toolSelect.value;
-  [pipForm, riskForm].forEach(f => f.classList.add("hidden"));
-  if (selected === "pip") pipForm.classList.remove("hidden");
-  if (selected === "risk") riskForm.classList.remove("hidden");
+toolSelect.addEventListener('change', function() {
+  // Sembunyikan semua form
+  pipForm.classList.add('hidden');
+  riskForm.classList.add('hidden');
+  
+  // Tampilkan form yang dipilih
+  if (this.value === 'pip') {
+    pipForm.classList.remove('hidden');
+  } else if (this.value === 'risk') {
+    riskForm.classList.remove('hidden');
+  }
+  
+  // Reset output
   resetOutput();
 });
 
 function resetOutput() {
-  output.innerHTML = `<div class="output-empty">Pilih kalkulator dan masukkan data untuk melihat hasil</div>`;
-  output.classList.remove("has-content");
+  output.innerHTML = '<div class="output-empty">Pilih kalkulator dan masukkan data untuk melihat hasil</div>';
+  output.classList.remove('has-content');
 }
 
 function showLoading() {
-  output.innerHTML = `<div class="loading"></div>`;
-  output.classList.add("has-content");
+  output.innerHTML = '<div class="loading"></div>';
+  output.classList.add('has-content');
 }
 
 function displayResults(content) {
   output.innerHTML = content;
-  output.classList.add("has-content");
+  output.classList.add('has-content');
 }
 
-pipForm.addEventListener("submit", e => {
+function resultItem(label, value, extraClass = "") {
+  return `<div class="result-item ${extraClass}">
+    <span class="result-label">${label}</span>
+    <span class="result-value">${value}</span>
+  </div>`;
+}
+
+// Pip Calculator
+pipForm.addEventListener('submit', function(e) {
   e.preventDefault();
   showLoading();
 
   setTimeout(() => {
-    const entry = parseFloat($("entry").value);
-    const tp = parseFloat($("tp").value);
-    const sl = parseFloat($("sl").value);
+    const entry = parseFloat(document.getElementById('entry').value);
+    const tp = parseFloat(document.getElementById('tp').value);
+    const sl = parseFloat(document.getElementById('sl').value);
 
-    const pipTP = Math.abs(tp - entry) * 10;
-    const pipSL = Math.abs(entry - sl) * 10;
-    const direction = tp > entry ? "Buy" : "Sell";
-    const rr = (pipTP / pipSL).toFixed(2);
+    // Determine direction
+    const direction = tp > entry ? 'Buy' : 'Sell';
+    
+    // Calculate pips (untuk gold: 1 pip = 0.1)
+    const pipToTP = Math.abs(tp - entry) / 0.1;
+    const pipToSL = Math.abs(entry - sl) / 0.1;
+    const riskReward = pipToTP / pipToSL;
 
-    displayResults(`
-      ${resultItem("Direction:", `<span class="result-value ${direction === "Buy" ? "direction-buy" : "direction-sell"}">${direction}</span>`)}
-      ${resultItem("Pip to TP:", `${pipTP.toFixed(1)} pips`)}
-      ${resultItem("Pip to SL:", `${pipSL.toFixed(1)} pips`)}
-      ${resultItem("Risk/Reward:", `1:${rr}`)}
-    `);
+    // Display results
+    const results = `
+      ${resultItem("Direction:", `<span class="${direction === 'Buy' ? 'direction-buy' : 'direction-sell'}">${direction}</span>`)}
+      ${resultItem("Pip to TP:", `${pipToTP.toFixed(3)} pips`)}
+      ${resultItem("Pip to SL:", `${pipToSL.toFixed(3)} pips`)}
+      ${resultItem("Risk/Reward:", `1:${riskReward.toFixed(2)}`)}
+    `;
+
+    displayResults(results);
   }, 500);
 });
 
+// Risk Calculator
 riskForm.addEventListener("submit", e => {
   e.preventDefault();
   showLoading();
 
   setTimeout(() => {
-    const balance = parseFloat($("balance").value);
-    const riskPercent = parseFloat($("riskPercent").value);
-    const slPips = parseFloat($("slRisk").value);
-    const leverage = parseFloat($("leverage").value);
+    const balance = parseFloat(document.getElementById("balance").value);
+    const riskPercent = parseFloat(document.getElementById("riskPercent").value);
+    const slPips = parseFloat(document.getElementById("slRisk").value);
+    const leverage = parseFloat(document.getElementById("leverage").value);
 
     const riskAmount = (riskPercent / 100) * balance;
     const calculatedLot = riskAmount / slPips;
@@ -70,7 +92,11 @@ riskForm.addEventListener("submit", e => {
     const leverageResults = [50, 100, 200, 500, 1000].map(lev => {
       const marginPerLot = (100 * balance) / lev;
       const maxLot = Math.max(0.01, Math.round((balance / marginPerLot * riskPercent / 100) * 100) / 100);
-      return { lev, marginPerLot: marginPerLot.toFixed(2), maxLot: maxLot.toFixed(2) };
+      return {
+        lev,
+        marginPerLot: marginPerLot.toFixed(2),
+        maxLot: maxLot.toFixed(2)
+      };
     });
 
     const leverageHTML = leverageResults.map(r =>
@@ -90,29 +116,24 @@ riskForm.addEventListener("submit", e => {
         </span>
       </div>` : '';
 
-    displayResults(`
+    const resultsHTML = `
       ${resultItem("Total Risiko:", `$${riskAmount.toFixed(2)}`)}
       ${resultItem("Saran Lot Size:", `${suggestedLot.toFixed(2)} lot XAU`)}
       ${lotWarning}
       ${resultItem("Risk Aktual:", `$${actualRisk.toFixed(2)} (${actualRiskPercent}%)`)}
       ${resultItem("Max Loss:", `${riskPercent.toFixed(1)}% dari modal (target)`)}
       ${resultItem("Balance After Loss:", `$${(balance - actualRisk).toFixed(2)}`)}
-      ${resultItem("Leverage Dipilih:", `1:${leverage}`)}
+      ${resultItem("Leverage Dipilih:", `1:${leverage}`, "broker-info")}
       ${resultItem("📋 Info Broker:", `Exness MT5 - Min lot: 0.01`, "broker-info")}
       <div class="leverage-section">
         <div class="leverage-title">📊 Analisis Leverage</div>
         ${leverageHTML}
       </div>
-    `);
+    `;
+
+    displayResults(resultsHTML);
   }, 500);
 });
 
-function resultItem(label, value, extraClass = "") {
-  return `<div class="result-item ${extraClass}">
-    <span class="result-label">${label}</span>
-    <span class="result-value">${value}</span>
-  </div>`;
-}
-
-// Init
+// Initialize
 resetOutput();
