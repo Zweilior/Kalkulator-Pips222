@@ -1,19 +1,21 @@
 // Tool selector functionality
 const toolSelect = document.getElementById('toolSelect');
+const pipContainer = document.getElementById('pipContainer');
+const riskContainer = document.getElementById('riskContainer');
 const pipForm = document.getElementById('pipForm');
 const riskForm = document.getElementById('riskForm');
 const output = document.getElementById('output');
 
 toolSelect.addEventListener('change', function() {
-  // Sembunyikan semua form
-  pipForm.classList.add('hidden');
-  riskForm.classList.add('hidden');
+  // Sembunyikan semua container
+  pipContainer.classList.add('hidden');
+  riskContainer.classList.add('hidden');
   
-  // Tampilkan form yang dipilih
+  // Tampilkan container yang dipilih
   if (this.value === 'pip') {
-    pipForm.classList.remove('hidden');
+    pipContainer.classList.remove('hidden');
   } else if (this.value === 'risk') {
-    riskForm.classList.remove('hidden');
+    riskContainer.classList.remove('hidden');
   }
   
   // Reset output
@@ -135,5 +137,9 @@ riskForm.addEventListener("submit", e => {
   }, 500);
 });
 
-// Initialize
-resetOutput();
+// Initialize - tampilkan pip calculator secara default
+document.addEventListener('DOMContentLoaded', function() {
+  pipContainer.classList.remove('hidden');
+  riskContainer.classList.add('hidden');
+  resetOutput();
+});
